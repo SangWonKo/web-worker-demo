@@ -6,14 +6,17 @@ onmessage = (evt) => {
   // console.log(evt);
   // postMessage(fib(evt.data));
   let intervalID = null;
-  let message = evt.data;
+  let msg = evt.data;
+  console.log(msg);
   intervalID = setInterval(() => {
-    message.count = message.count + 1;
-    postMessage(message);
-    if (message.count >= message.limit) {
-      clearInterval(intervalID);
-      message.stop = true;
-      postMessage(message);
+    if (msg.active && !msg.pause) {
+      msg.count = msg.count + 1;
+      postMessage(msg);
+
+      if (msg.count >= msg.limit || msg.pause) {
+        clearInterval(intervalID);
+        postMessage(msg);
+      }
     }
   }, 1000);
 };

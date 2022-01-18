@@ -8,7 +8,8 @@ const createWorker = () =>
 
 const defaultState = {
   count: 0,
-  stop: false,
+  active: false,
+  pause: false,
   limit: 10,
 };
 
@@ -25,21 +26,42 @@ function App() {
   //   });
   // }, []);
 
-  const handleCount = useCallback(() => {
-    setCounter((prev) => ({ ...prev, count: counter.count }));
-    worker.current.postMessage(counter);
-  }, [counter, worker]);
+  const handleCount = useCallback(
+    (flg) => () => {
+      // console.log(counter.count);
+      const newState =
+        flg !== "reset"
+          ? { ...counter, [flg]: !counter[flg] }
+          : defaultState;
+      console.log(newState);
+      setCounter(newState);
+      worker.current.postMessage(newState);
+      // let newState = { ...counter, active: !counter.active };
+      // console.log(newState);
+    },
+    [counter, worker]
+  );
 
   worker.current.onmessage = (evt) => {
-    const { count, stop, limit } = evt.data;
     console.log(evt);
-    setCounter({ count, stop, limit });
+    const { count, active, pause, limit } = evt.data;
+    // console.log(evt.data);
+
+    setCounter({ count, active, pause, limit });
   };
 
   return (
     <>
       <div>Counter: {counter.count}</div>
-      <button onClick={handleCount}>start</button>
+      {!counter.active && (
+        <button onClick={handleCount("active")}>start</button>
+      )}
+      {counter.active && (
+        <button onClick={handleCount("pause")}>
+          {counter.pause ? "resume" : "pause"}
+        </button>
+      )}
+      {counter.pause && <button onClick={handleCount("reset")}>reset</button>}
     </>
   );
 }
