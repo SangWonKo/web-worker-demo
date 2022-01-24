@@ -36,7 +36,7 @@
     transform: rotate(360deg);
   }
 }
-
+/* 
 body {
   min-height: 100vh;
   display: flex;
@@ -44,4 +44,4 @@ body {
   justify-content: center;
   align-items: center;
   background: #f4f5fa;
-}
+} */
