@@ -6,8 +6,10 @@ onmessage = (evt) => {
   let msg = evt.data;
 
   if(msg.active && !msg.pause) {
+    console.log("before")
     intervalId = setInterval(() => {
       msg.count = msg.count + 1;
+      console.log("ing")
       postMessage(msg);
 
       if (msg.count >= msg.limit) {
@@ -15,6 +17,7 @@ onmessage = (evt) => {
         postMessage(msg);
       }
     }, 1000);
+    console.log("after")
   } else {
     clearInterval(intervalId);
     

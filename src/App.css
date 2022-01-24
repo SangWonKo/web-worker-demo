@@ -38,10 +38,6 @@
 }
 /* 
 body {
-  min-height: 100vh;
-  display: flex;
-  font-family: "Inter", Arial;
-  justify-content: center;
-  align-items: center;
-  background: #f4f5fa;
+  --button-star-greyscale: 100%;
+  --button-star-contrast: 0%;
 } */

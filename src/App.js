@@ -1,8 +1,8 @@
 import { Suspense, useCallback, useRef, useState } from "react";
-import { motion, Variants, Transition, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { styled } from "@mui/material/styles";
 import "./App.css";
-import { Box, Container, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import Star from "./Star";
 
 // import { useWorker } from "react-hooks-worker";
@@ -13,15 +13,27 @@ const MotionText = styled(motion.div)`
   font-weight: 600;
   line-height: 40px;
   text-align: center;
+  padding: 100px;
 `;
 
-const StyledContainer = styled(Container)`
+const Container = styled("div")`
+  ${"--button-star-greyscale"}: 100%;
+  ${"--button-star-contrast"}: 0%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   font-family: "Inter", Arial;
   background: #f4f5fa;
+`;
+
+const StyledBox = styled(Box)`
+  padding-left: 120px;
+  position: relative;
+  text-align: center;
+  display: flex;
+  align-items: center;
 `;
 
 const MotionButton = styled(motion.button)`
@@ -34,7 +46,7 @@ const MotionButton = styled(motion.button)`
   padding: 20px;
   padding-left: 25px;
   padding-right: 25px;
-  margin: 15px 0;
+  margin: 30px 0 20px;
   /* font-family: "Montserrat Alternates"; */
   font-size: 42px;
   letter-spacing: -2px;
@@ -62,11 +74,11 @@ const MotionIcon = styled(motion.div)`
   z-index: 1;
   pointer-events: none;
   transform-origin: 50% 52%;
-  /* filter: grayscale(var(--button-star-greyscale))
-    contrast(var(--button-star-contrast)); */
+  filter: grayscale(var(--button-star-greyscale))
+    contrast(var(--button-star-contrast));
   opacity: 0.3;
   position: absolute;
-  left: 50px;
+  left: -240px;
 `;
 
 const createWorker = () =>
@@ -110,73 +122,137 @@ function App() {
     console.log(evt);
     const { count, active, pause, limit } = evt.data;
     // console.log(evt.data);
-    const newColor = Math.floor(Math.random() * 16777215).toString(16);
+    const newColor = Math.floor(Math.random() * 0xffffff).toString(16);
     setCounter({
       count,
-      active: count === 10 ? false : active,
-      pause: count === 10 ? true : pause,
+      active: count === counter.limit ? false : active,
+      pause: count === counter.limit ? true : pause,
       limit,
     });
     setTextColor("#" + newColor);
   };
 
+  const [isHover, setIsHover] = useState({
+    start: false,
+    pause: false,
+    reset: false,
+  });
+
   return (
-    <StyledContainer>
-      <MotionIcon>
-        <Suspense fallback={null}>
-          <Star isHover={true} />
-        </Suspense>
-      </MotionIcon>
-      <Grid
-        container
-        spacing={2}
-        alignItems="center"
-        justifyContent="center"
-        maxWidth="sm"
-      >
-        <Grid item xs={3}>
-          <AnimatePresence>
-            <MotionText
-              key={counter.count}
-              exit={{ y: -40, opacity: 0 }}
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{
-                duration: 0.25,
-                // delay: 0.3,
-              }}
-              style={{ color: textColor }}
-            >
-              {counter.count}
-            </MotionText>
-          </AnimatePresence>
-        </Grid>
-        <Grid item xs={3}>
-          <MotionButton
+    <Container>
+      <StyledBox>
+        <MotionIcon
+          animate={[isHover.start ? "hover" : "rest"]}
+          variants={iconVariants}
+        >
+          <Suspense fallback={null}>
+            <Star isHover={isHover.start} counter={counter} color={textColor} />
+          </Suspense>
+        </MotionIcon>
+        <AnimatePresence>
+          <MotionText
+            key={counter.count}
+            exit={{ y: -40, opacity: 0, position: "absolute" }}
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.25,
+              // delay: 0.3,
+            }}
+            style={{ color: textColor }}
+          >
+            {counter.count}
+          </MotionText>
+        </AnimatePresence>
+        <Box width={150}>
+          <Button
+            // variants={buttonVariants}
             onClick={handleCount("active")}
+            isHover={isHover.start}
+            onHoverStart={() =>
+              setIsHover((prev) => ({ ...prev, start: true }))
+            }
+            onHoverEnd={() => setIsHover((prev) => ({ ...prev, start: false }))}
             disabled={counter.active}
-            whileTap="press"
           >
             start
-          </MotionButton>
-
-          <MotionButton
+          </Button>
+          <Button
             onClick={handleCount("pause")}
+            isHover={isHover.pause}
+            onHoverStart={() =>
+              setIsHover((prev) => ({ ...prev, pause: true }))
+            }
+            onHoverEnd={() => setIsHover((prev) => ({ ...prev, pause: false }))}
             disabled={!counter.active}
           >
             {counter.pause ? "resume" : "pause"}
-          </MotionButton>
+          </Button>
 
-          <MotionButton
+          <Button
             onClick={handleCount("reset")}
+            isHover={isHover.reset}
+            onHoverStart={() =>
+              setIsHover((prev) => ({ ...prev, reset: true }))
+            }
+            onHoverEnd={() => setIsHover((prev) => ({ ...prev, reset: false }))}
             disabled={!counter.pause}
           >
             reset
-          </MotionButton>
-        </Grid>
-      </Grid>
-    </StyledContainer>
+          </Button>
+        </Box>
+      </StyledBox>
+    </Container>
   );
 }
 
 export default App;
+
+const Button = ({
+  isHover,
+  onHoverStart,
+  onHoverEnd,
+  variants,
+  onClick,
+  children,
+  ...props
+}) => {
+  return (
+    <MotionButton
+      animate={[isHover ? "hover" : "rest"]}
+      variants={buttonVariants}
+      initial={false}
+      whileTap="press"
+      onHoverStart={onHoverStart}
+      onHoverEnd={onHoverEnd}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </MotionButton>
+  );
+};
+
+const buttonVariants = {
+  rest: {
+    transition: { duration: 0.7 },
+  },
+  hover: {
+    scale: 1.2,
+    y: -8,
+  },
+  press: { scale: 1.1 },
+};
+
+const iconVariants = {
+  rest: {
+    "--button-star-greyscale": "100%",
+    "--button-star-contrast": "0%",
+   
+  },
+  hover: {
+    "--button-star-greyscale": "0%",
+    "--button-star-contrast": "100%",
+    opacity: 1
+  },
+};
