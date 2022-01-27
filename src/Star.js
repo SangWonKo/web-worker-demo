@@ -32,7 +32,7 @@ const Star = ({ isLiked, isHover, counter, color }) => {
           geometry={nodes.Star.geometry}
           rotation={[Math.PI / 2, 0, degreesToRadians(360)]}
           scale={1}
-          animate={[isLiked ? "liked" : "unliked", isHover ? "hover" : ""]}
+          animate={[counter.active ? "liked" : "unliked", isHover ? "hover" : ""]}
           variants={{
             unliked: {
               x: [0, 0],
@@ -54,7 +54,7 @@ const Star = ({ isLiked, isHover, counter, color }) => {
               // }
             },
           }}
-          transition={isHover || counter.active ? likedTransition : ""}
+          transition={isHover ? likedTransition : ""}
         >
           <meshPhongMaterial
             color={color === "#000000" ? "#ffdd00" : color}
