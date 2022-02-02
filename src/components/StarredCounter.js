@@ -1,9 +1,9 @@
 import { Suspense, useCallback, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { styled } from "@mui/material/styles";
-import "./App.css";
 import { Box } from "@mui/material";
-import Star from "./components/Star";
+import Star from "./Star";
+import PageTransition from "./PageTransition";
 
 // import { useWorker } from "react-hooks-worker";
 
@@ -19,13 +19,6 @@ const MotionText = styled(motion.div)`
 const Container = styled("div")`
   ${"--button-star-greyscale"}: 100%;
   ${"--button-star-contrast"}: 0%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  font-family: "Inter", Arial;
-  background: #f4f5fa;
 `;
 
 const StyledBox = styled(Box)`
@@ -36,7 +29,7 @@ const StyledBox = styled(Box)`
   align-items: center;
 `;
 
-const MotionButton = styled(motion.button)`
+export const MotionButton = styled(motion.button)`
   border: none;
   cursor: pointer;
   background-color: #fff;
@@ -82,7 +75,7 @@ const MotionIcon = styled(motion.div)`
 `;
 
 const createWorker = () =>
-  new Worker(new URL("./workers/worker.js", import.meta.url));
+  new Worker(new URL("../workers/worker.js", import.meta.url));
 
 const defaultState = {
   count: 0,
@@ -139,70 +132,82 @@ function App() {
   });
 
   return (
-    <Container>
-      <StyledBox>
-        <MotionIcon
-          animate={[isHover.start ? "hover" : "rest"]}
-          variants={iconVariants}
-        >
-          <Suspense fallback={null}>
-            <Star isHover={isHover.start} counter={counter} color={textColor} />
-          </Suspense>
-        </MotionIcon>
-        <AnimatePresence>
-          <MotionText
-            key={counter.count}
-            exit={{ y: -40, opacity: 0, position: "absolute" }}
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{
-              duration: 0.25,
-              // delay: 0.3,
-            }}
-            style={{ color: textColor }}
+    <PageTransition>
+      <Container>
+        <StyledBox>
+          <MotionIcon
+            animate={[isHover.start ? "hover" : "rest"]}
+            variants={iconVariants}
           >
-            {counter.count}
-          </MotionText>
-        </AnimatePresence>
-        <Box width={150}>
-          <Button
-            // variants={buttonVariants}
-            onClick={handleCount("active")}
-            isHover={isHover.start}
-            onHoverStart={() =>
-              setIsHover((prev) => ({ ...prev, start: true }))
-            }
-            onHoverEnd={() => setIsHover((prev) => ({ ...prev, start: false }))}
-            disabled={counter.active}
-          >
-            start
-          </Button>
-          <Button
-            onClick={handleCount("pause")}
-            isHover={isHover.pause}
-            onHoverStart={() =>
-              setIsHover((prev) => ({ ...prev, pause: true }))
-            }
-            onHoverEnd={() => setIsHover((prev) => ({ ...prev, pause: false }))}
-            disabled={!counter.active}
-          >
-            {counter.pause ? "resume" : "pause"}
-          </Button>
+            <Suspense fallback={null}>
+              <Star
+                isHover={isHover.start}
+                counter={counter}
+                color={textColor}
+              />
+            </Suspense>
+          </MotionIcon>
+          <AnimatePresence>
+            <MotionText
+              key={counter.count}
+              exit={{ y: -40, opacity: 0, position: "absolute" }}
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{
+                duration: 0.25,
+                // delay: 0.3,
+              }}
+              style={{ color: textColor }}
+            >
+              {counter.count}
+            </MotionText>
+          </AnimatePresence>
+          <Box width={150}>
+            <Button
+              // variants={buttonVariants}
+              onClick={handleCount("active")}
+              isHover={isHover.start}
+              onHoverStart={() =>
+                setIsHover((prev) => ({ ...prev, start: true }))
+              }
+              onHoverEnd={() =>
+                setIsHover((prev) => ({ ...prev, start: false }))
+              }
+              disabled={counter.active}
+            >
+              start
+            </Button>
+            <Button
+              onClick={handleCount("pause")}
+              isHover={isHover.pause}
+              onHoverStart={() =>
+                setIsHover((prev) => ({ ...prev, pause: true }))
+              }
+              onHoverEnd={() =>
+                setIsHover((prev) => ({ ...prev, pause: false }))
+              }
+              disabled={!counter.active}
+            >
+              {counter.pause ? "resume" : "pause"}
+            </Button>
 
-          <Button
-            onClick={handleCount("reset")}
-            isHover={isHover.reset}
-            onHoverStart={() =>
-              setIsHover((prev) => ({ ...prev, reset: true }))
-            }
-            onHoverEnd={() => setIsHover((prev) => ({ ...prev, reset: false }))}
-            disabled={!counter.pause}
-          >
-            reset
-          </Button>
-        </Box>
-      </StyledBox>
-    </Container>
+            <Button
+              onClick={handleCount("reset")}
+              isHover={isHover.reset}
+              onHoverStart={() =>
+                setIsHover((prev) => ({ ...prev, reset: true }))
+              }
+              onHoverEnd={() =>
+                setIsHover((prev) => ({ ...prev, reset: false }))
+              }
+              disabled={!counter.pause}
+            >
+              reset
+            </Button>
+          </Box>
+        </StyledBox>
+      </Container>
+    </PageTransition>
   );
 }
 
@@ -248,11 +253,10 @@ const iconVariants = {
   rest: {
     "--button-star-greyscale": "100%",
     "--button-star-contrast": "0%",
-   
   },
   hover: {
     "--button-star-greyscale": "0%",
     "--button-star-contrast": "100%",
-    opacity: 1
+    opacity: 1,
   },
 };
