@@ -1,8 +1,8 @@
 import { styled } from "@mui/material/styles";
-import { AnimatePresence } from "framer-motion";
+// import { AnimatePresence } from "framer-motion";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./Header";
-import Home from "./Home";
+import ImageLoader from "./ImageLoader";
 import StarredCounter from "./StarredCounter";
 
 const Container = styled("div")`
@@ -22,9 +22,9 @@ const RawRouter = () => {
       <Header />
         {/* <AnimatePresence exitBeforeEnter initial={false}> */}
           <Routes>
-            <Route index element={<Home />} />
+            <Route index element={<></>} />
             <Route path="starred-counter" element={<StarredCounter />} />
-            <Route path="image-loader" element={<Home />} />
+            <Route path="image-loader" element={<ImageLoader />} />
           </Routes>
         {/* </AnimatePresence> */}
       </Container>

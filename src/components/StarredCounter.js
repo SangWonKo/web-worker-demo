@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { styled } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import Star from "./Star";
-import PageTransition from "./PageTransition";
+import PageTransition from "./framer-motions/PageTransition";
 
 // import { useWorker } from "react-hooks-worker";
 
@@ -75,7 +75,7 @@ const MotionIcon = styled(motion.div)`
 `;
 
 const createWorker = () =>
-  new Worker(new URL("../workers/worker.js", import.meta.url));
+  new Worker(new URL("../workers/counter_worker.js", import.meta.url));
 
 const defaultState = {
   count: 0,
