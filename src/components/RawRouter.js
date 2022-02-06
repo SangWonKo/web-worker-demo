@@ -7,10 +7,10 @@ import StarredCounter from "./StarredCounter";
 
 const Container = styled("div")`
   position: relative;
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
   min-height: 100vh;
   font-family: "Inter", Arial;
   background: #f4f5fa;
@@ -19,13 +19,13 @@ const RawRouter = () => {
   return (
     <BrowserRouter>
       <Container>
-      <Header />
+        <Header />
         {/* <AnimatePresence exitBeforeEnter initial={false}> */}
-          <Routes>
-            <Route index element={<></>} />
-            <Route path="starred-counter" element={<StarredCounter />} />
-            <Route path="image-loader" element={<ImageLoader />} />
-          </Routes>
+        <Routes>
+          <Route index element={<></>} />
+          <Route path="starred-counter" element={<StarredCounter />} />
+          <Route path="image-loader" element={<ImageLoader />} />
+        </Routes>
         {/* </AnimatePresence> */}
       </Container>
     </BrowserRouter>

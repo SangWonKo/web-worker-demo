@@ -19,6 +19,11 @@ const MotionText = styled(motion.div)`
 const Container = styled("div")`
   ${"--button-star-greyscale"}: 100%;
   ${"--button-star-contrast"}: 0%;
+   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 `;
 
 const StyledBox = styled(Box)`
@@ -29,16 +34,14 @@ const StyledBox = styled(Box)`
   align-items: center;
 `;
 
-export const MotionButton = styled(motion.button)`
+const MotionButton = styled(motion.button)`
   border: none;
   cursor: pointer;
   background-color: #fff;
   color: #5e5e5e;
   border-radius: 36px;
   outline: none;
-  padding: 20px;
-  padding-left: 25px;
-  padding-right: 25px;
+  padding: 20px 25px;
   margin: 30px 0 20px;
   /* font-family: "Montserrat Alternates"; */
   font-size: 42px;

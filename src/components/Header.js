@@ -28,6 +28,7 @@ const MotionNav = styled(motion.nav)`
   /* background-color: white; */
   /* border-bottom: 1px solid #5e5e5e; */
   box-shadow: 0 2px 4px 2px rgb(0 0 0 / 5%);
+  z-index: 49;
 `;
 
 const MotionTitle = styled(motion.h1)`
@@ -103,14 +104,14 @@ const Header = () => {
         >
           <motion.path
             d="M2 2h60v60H2z"
-            stroke-linejoin="round"
-            stroke-linecap="round"
+            strokeLinejoin="round"
+            strokeLinecap="round"
             variants={pathVariants}
           />
           <motion.path
             d="M50 32H15m13-11L15 31.998 28 43"
-            stroke-linejoin="round"
-            stroke-linecap="round"
+            strokeLinejoin="round"
+            strokeLinecap="round"
             variants={pathVariants}
           />
         </motion.svg>
