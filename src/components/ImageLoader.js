@@ -15,13 +15,33 @@ import { styled } from "@mui/material/styles";
 import { AnimateSharedLayout, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ExpandedCard from "./ExpandedCard";
+import PageTransition from "./framer-motions/PageTransition";
 
 const StyledContainer = styled(Container)`
   padding: 120px 0;
   min-height: 100vh;
   text-align: center;
 `;
-const StyledButton = styled("button")`
+
+const ButtonWrapper = styled("div")`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+const Glow = styled(motion.div)`
+  background: linear-gradient(90deg, #ffa0ae 0%, #aacaef 75%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-filter: blur(15px);
+  filter: blur(15px);
+  border-radius: 36px;
+`;
+
+const StyledButton = styled(motion.button)`
   border: none;
   cursor: pointer;
   outline: none;
@@ -141,9 +161,9 @@ const ImageLoader = () => {
       );
     }
 
-    return () => {
-      workers.forEach((worker) => worker.terminate());
-    };
+    // return () => {
+    //   workers.forEach((worker) => worker.terminate());
+    // };
   }, [maxWorkers, workers]);
 
   const imagesPerWorker = useMemo(
@@ -230,60 +250,83 @@ const ImageLoader = () => {
   //   };
   // }, [workers]);
 
+  const [btnHover, setBtnHover] = useState(false);
+
   return (
-    <StyledContainer maxWidth="xl">
-      <StyledButton onClick={handleWithoutWorker(true)}>Compare</StyledButton>
-      <Grid container>
-        <Grid item xs={6} textAlign="center">
-          <h1>With Worker</h1>
-          {show.both && (
-            <Stack direction="row" flexWrap="wrap" justifyContent="center">
-              {imageBlobs.map((imgBlob, index) => (
-                <ExpandableCard key={index} imgBlob={imgBlob} />
-              ))}
-            </Stack>
-          )}
-        </Grid>
-        <Grid item xs={6} textAlign="center">
-          <h1>Without Worker</h1>
-          {show.both && (
-            <Stack direction="row" flexWrap="wrap" justifyContent="center">
-              {images.map((img, index) => (
-                <Card
-                  key={index}
-                  sx={{ width: "25%" }}
-                  style={{ margin: "9px" }}
-                >
-                  <ImageWrap
-                    style={{
-                      backgroundImage: `url(${img})`,
-                    }}
-                  />
-                  {/* <CardMedia
+    <PageTransition>
+      <StyledContainer maxWidth="xl">
+        <StyledButton
+          onClick={handleWithoutWorker(true)}
+          animate={[btnHover ? "hover" : "rest"]}
+          variants={buttonVariants}
+          initial={false}
+          whileTap="press"
+          onHoverStart={() => setBtnHover(true)}
+          onHoverEnd={() => setBtnHover(false)}
+        >
+          <ButtonWrapper>
+            <Glow
+              variants={glowVariants}
+              transition={{
+                ease: "easeOut",
+                delay: 0.15,
+              }}
+            />
+            Compare
+          </ButtonWrapper>
+        </StyledButton>
+        <Grid container>
+          <Grid item xs={6} textAlign="center">
+            <h1>With Worker</h1>
+            {show.both && (
+              <Stack direction="row" flexWrap="wrap" justifyContent="center">
+                {imageBlobs.map((imgBlob, index) => (
+                  <ExpandableCard key={index} imgBlob={imgBlob} />
+                ))}
+              </Stack>
+            )}
+          </Grid>
+          <Grid item xs={6} textAlign="center">
+            <h1>Without Worker</h1>
+            {show.both && (
+              <Stack direction="row" flexWrap="wrap" justifyContent="center">
+                {images.map((img, index) => (
+                  <Card
+                    key={index}
+                    sx={{ width: "25%" }}
+                    style={{ margin: "9px" }}
+                  >
+                    <ImageWrap
+                      style={{
+                        backgroundImage: `url(${img})`,
+                      }}
+                    />
+                    {/* <CardMedia
                     component="img"
                     src={img}
                     sx={{ height: "130px", background: "#5e5e5e" }}
                   /> */}
-                  <CardContent sx={{ textAlign: "left" }}>
-                    <Typography gutterBottom variant="h6">
-                      Item Title
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontSize={"12px"}
-                    >
-                      Lorem ipsum 머시기머시기 블라블라 어쩌구저쩌구
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Stack>
-          )}
-          {/* <img src={"https://picsum.photos/seed/picsum/500/450"} alt="이미지" /> */}
+                    <CardContent sx={{ textAlign: "left" }}>
+                      <Typography gutterBottom variant="h6">
+                        Item Title
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        fontSize={"12px"}
+                      >
+                        Lorem ipsum 머시기머시기 블라블라 어쩌구저쩌구
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            )}
+            {/* <img src={"https://picsum.photos/seed/picsum/500/450"} alt="이미지" /> */}
+          </Grid>
         </Grid>
-      </Grid>
-    </StyledContainer>
+      </StyledContainer>
+    </PageTransition>
   );
 };
 
@@ -367,4 +410,29 @@ const ExpandableCard = ({ imgBlob }) => {
       )}
     </AnimateSharedLayout>
   );
+};
+
+const buttonVariants = {
+  rest: {
+    transition: { duration: 0.7 },
+  },
+  hover: {
+    scale: 1.2,
+    y: -8,
+    transition: {
+      duration: 0.3,
+      yoyo: Infinity,
+    },
+  },
+  press: { scale: 1.1 },
+};
+
+const glowVariants = {
+  rest: {
+    // scale: 1.05,
+    opacity: 0,
+  },
+  hover: {
+    opacity: 0.8,
+  },
 };
