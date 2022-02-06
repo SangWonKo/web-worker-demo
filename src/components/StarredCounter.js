@@ -145,7 +145,7 @@ function App() {
             <Suspense fallback={null}>
               <Star
                 isHover={isHover.start}
-                counter={counter}
+                // counter={counter}
                 color={textColor}
               />
             </Suspense>

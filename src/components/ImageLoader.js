@@ -1,3 +1,4 @@
+import { Star } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -47,7 +48,16 @@ const MotionCard = styled(motion.div)`
   /* margin: 0 auto; */
 `;
 
+export const RatingWrapper = styled("div")`
+  position: absolute;
+`;
 
+const RatingStar = styled("button")`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+`;
 const ImageWrap = styled("div")`
   display: inline-flex;
   align-items: center;
@@ -282,10 +292,19 @@ export default ImageLoader;
 const ExpandableCard = ({ imgBlob }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+
+  const ratingProps = { rating, setRating, hover, setHover };
+
   return (
     <AnimateSharedLayout>
       {isExpanded ? (
-        <ExpandedCard onClick={() => setIsExpanded(false)} img={imgBlob} />
+        <ExpandedCard
+          onClick={() => setIsExpanded(false)}
+          img={imgBlob}
+          {...ratingProps}
+        />
       ) : (
         <MotionCard
           layoutId="expandable-card"
@@ -293,6 +312,28 @@ const ExpandableCard = ({ imgBlob }) => {
           transition={{ duration: 0.5 }}
         >
           <Card style={{ margin: "9px" }}>
+            <RatingWrapper>
+              {[...Array(5)].map((star, index) => {
+                index += 1;
+                return (
+                  <RatingStar
+                    type="button"
+                    key={index}
+                    className={index <= (hover || rating) ? "on" : "off"}
+                    onClick={() => setRating(index)}
+                    onMouseEnter={() => setHover(index)}
+                    onMouseLeave={() => setHover(rating)}
+                  >
+                    <Star
+                      sx={{
+                        color:
+                          index <= (hover || rating) ? "#ffdd00" : "#5e5e5e",
+                      }}
+                    />
+                  </RatingStar>
+                );
+              })}
+            </RatingWrapper>
             {imgBlob === undefined ? (
               <Skeleton variant="rectangular" height={130} />
             ) : (

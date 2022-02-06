@@ -4,7 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 // import { useEffect } from "react";
 
-const Star = ({ isLiked, isHover, counter, color }) => {
+const Star = ({ isLiked, isHover, color = "#000000" }) => {
   const { nodes } = useGLTF("/star3.glb");
 
   // useEffect(() => {
@@ -32,7 +32,7 @@ const Star = ({ isLiked, isHover, counter, color }) => {
           geometry={nodes.Star.geometry}
           rotation={[Math.PI / 2, 0, degreesToRadians(360)]}
           scale={1}
-          animate={[counter.active ? "liked" : "unliked", isHover ? "hover" : ""]}
+          animate={[isHover ? "hover" : ""]}
           variants={{
             unliked: {
               x: [0, 0],
